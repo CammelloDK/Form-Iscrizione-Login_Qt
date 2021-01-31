@@ -474,8 +474,8 @@ void MainWindow::swapPagine(char pagina, QString nome, QString cognome){
             this->hide();
             Loginadmin ap(this);
             ap.setModal(true);
-            ap.setNome(nome);
-            ap.setCognome(cognome);
+            ap.setAdmin(nome,cognome);
+            ap.setGrafico(&csv);
             ap.exec();
             this->show();
         }
