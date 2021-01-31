@@ -74,6 +74,11 @@ void MainWindow::on_btniscriviti_clicked()
                     msgIscrizione.exec();
                     }
                     break;
+        case 'x': {
+                    msgIscrizione.setText("Inserire un indirizzo mail o un numero telefonico valido");
+                    msgIscrizione.exec();
+                    }
+                    break;
         case 'o': {if(checkIscritto()){
                     msgIscrizione.setText("Utente già presente a sistema");
                     msgIscrizione.exec();
@@ -153,6 +158,11 @@ void MainWindow::on_btnaccedi_clicked()
                     msgAccedi.exec();
                     }
                     break;
+        case 'x': {
+                    msgAccedi.setText("Inserire un indirizzo mail o un numero telefonico valido");
+                    msgAccedi.exec();
+                    }
+                    break;
         case 'p': {
                     msgAccedi.setText("Inserire password");
                     msgAccedi.exec();
@@ -194,12 +204,38 @@ char MainWindow::checkElements(){
 
 char MainWindow::checkTelMailPswd(){
     QString telmail = ui->lntelmail->text();
+    QString nomeutente, dominio= "";
+    QStringList check;
 
     //Mail
-    if (telmail.contains('@')){
-        qint16 chiocind = telmail.indexOf('@');
-        qint16 puntind = telmail.lastIndexOf('.');
-        if(chiocind<1 || puntind<chiocind+2 || puntind+2>=telmail.length())
+    if (telmail.contains('@') && telmail.contains('.')){
+
+        check=telmail.split('@');
+        nomeutente=check[0];
+        dominio=check[1];
+
+        if(nomeutente.length()!=0 && dominio.length()>=4 && dominio.contains('.')){
+            for(int i=0;i<nomeutente.length();++i)
+                if(!nomeutente[i].isLetter() && !nomeutente[i].isDigit() && nomeutente[i]!='.' && nomeutente[i]!='-' && nomeutente[i]!='_')
+                    return 'm';
+
+            check=dominio.split('.');
+            nomeutente=check[0];
+            dominio=check[1];
+
+            if(nomeutente.length()>=1 && dominio.length()>=2){
+                for(int i=0;i<nomeutente.length();++i)
+                    if(!nomeutente[i].isLetter() && !nomeutente[i].isDigit())
+                        return 'm';
+                for(int i=0;i<dominio.length();++i)
+                    if(!dominio[i].isLetter())
+                        return 'm';
+            }
+            else
+                return 'm';
+
+        }
+        else
             return 'm';
     }
     else{
@@ -210,7 +246,7 @@ char MainWindow::checkTelMailPswd(){
                     return 't';
         }
         else
-            return 't';
+            return 'x';
 
      }
     //Pass
@@ -271,7 +307,7 @@ void MainWindow::insertUtente(){
     utente u;
     u.nome = ui->lnnome->text();
     u.cognome = ui->lncognome->text();
-    u.telmail = ui->lntelmail->text();
+    u.telmail = ui->lntelmail->text().toLower();
     u.dataNascita = ui->datedata->date();
     if(ui->rdnbtndonna->isChecked())
         u.genere = 'F';
@@ -346,7 +382,7 @@ void MainWindow::login(){
     QMessageBox login;
 
 
-        if(ui->lntelmail->text() == admin.telmail){
+        if(ui->lntelmail->text().toLower() == admin.telmail){
             if(ui->lnpassword->text() == admin.password){
                 login.setText("Benvenuto superuser " + admin.nome + " " + admin.cognome);
                 //Apri grafico
@@ -365,7 +401,7 @@ void MainWindow::login(){
 
                 QStringList stringaUtente = in.readLine().split(',');
 
-                if(ui->lntelmail->text() == stringaUtente[2]){ //Terzo parametro
+                if(ui->lntelmail->text().toLower() == stringaUtente[2]){ //Terzo parametro
                     if (ui->lnpassword->text() == stringaUtente[5])
                         login.setText("Benvenuto " + stringaUtente[0] + " " + stringaUtente[1]);
                     else
