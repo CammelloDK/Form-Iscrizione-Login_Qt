@@ -330,10 +330,17 @@ void MainWindow::clearForm(){
     ui->lntelmail->setText("");
     ui->lnpassword->setText("");
     ui->datedata->setDate(QDate::currentDate());
-    if(ui->rdnbtndonna->isChecked())
+
+    if(ui->rdnbtndonna->isChecked()){
+        this->ui->rdnbtndonna->setAutoExclusive(false);
         ui->rdnbtndonna->setChecked(false);
-    else
+        this->ui->rdnbtndonna->setAutoExclusive(true);
+    }
+    else{
+        this->ui->rdnbtnuomo->setAutoExclusive(false);
         ui->rdnbtnuomo->setChecked(false);
+        this->ui->rdnbtnuomo->setAutoExclusive(true);
+    }
 }
 
 void MainWindow::on_btngotorecupero_clicked()
