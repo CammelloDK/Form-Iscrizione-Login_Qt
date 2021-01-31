@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
-#include <QDateTime>
+//#include <QDateTime>
+#include <QDir>
+#include <QFile>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -55,8 +57,26 @@ void MainWindow::on_btniscriviti_clicked()
                     msgIscrizione.exec();
                     }
                     break;
-
+        case 'o': {/*Tutto ok*/} break;
     };
+
+    /*
+    QString percorso = QApplication::applicationDirPath()+"/usrdb/";
+    QDir dir(percorso);
+    QFile csv;
+
+    if(!dir.exists()){
+        dir.mkpath(percorso);
+        csv.setFileName(percorso+"usr.csv");
+        csv.open(QIODevice::WriteOnly);
+        csv.close();
+    }
+    else
+        if(!csv.exists()){
+            csv.setFileName(percorso + "usr.csv");
+            csv.open(QIODevice::WriteOnly);
+            csv.close();
+        }*/
 
 }
 
@@ -74,6 +94,8 @@ void MainWindow::on_btngotoaccedi_clicked()
     ui->btnaccedi->setHidden(false);
     ui->btngotoiscriviti->setHidden(false);
     ui->lblgotoiscriviti->setHidden(false);
+
+
 }
 
 void MainWindow::on_btngotoiscriviti_clicked()
@@ -113,11 +135,13 @@ void MainWindow::on_btnaccedi_clicked()
                     msgAccedi.exec();
                     }
                     break;
+        case 'o': { /*tutto ok*/} break;
     };
 
 }
 
 char MainWindow::checkElements(){
+
     //Nome
     if (ui->lnnome->text()=="")
         return 'n';
@@ -130,11 +154,8 @@ char MainWindow::checkElements(){
     if ((!ui->rdnbtndonna->isChecked()) && (!ui->rdnbtnuomo->isChecked()))
         return 'g';
 
-    //Tel | Mail, PAssword
-    return checkTelMailPswd();
-
     //Data
-    QDate data = QDate::currentDate();
+    /*QDate data = QDate::currentDate();
     QDate dataInserita = ui->datedata->date();
 
     qint64 diffdata = data.toJulianDay() - dataInserita.toJulianDay();
@@ -144,7 +165,18 @@ char MainWindow::checkElements(){
     int anno = diffdata2.year() - primoJulian.year();
 
     if (anno<18)
+        return 'd'; */
+
+    //Data --> Sommo 18 anni alla data inserita dall'utente, se maggiore della data odierna erroe
+    QDate data = QDate::currentDate();
+    QDate dataInserita = ui->datedata->date();
+
+    if (dataInserita.addYears(18)>data)
         return 'd';
+
+    //Tel | Mail, PAssword
+    return checkTelMailPswd();
+
 
 }
 
@@ -159,7 +191,7 @@ char MainWindow::checkTelMailPswd(){
             return 'm';
     }
     else{
-    //Tel
+    //Tel  --> Controllo della lunghezza del numero di cellulare, poi controllo se tutte cifre
         if (telmail.length()==10){
             for (int i=0;i<telmail.length();++i)
                 if (!telmail[i].isDigit())
@@ -167,9 +199,13 @@ char MainWindow::checkTelMailPswd(){
         }
         else
             return 't';
-     }
 
+     }
+    //Pass
     if (ui->lnpassword->text()=="")
         return 'p';
+
+    return 'o';
 }
+
 
