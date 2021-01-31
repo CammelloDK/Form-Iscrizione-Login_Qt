@@ -1,15 +1,29 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
-//#include <QDateTime>
+#include <QDateTime>
 #include <QDir>
 #include <QFile>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    this->setFixedSize(310,340);
+
+    ui->btnaccedi->setHidden(true);
+    ui->btngotoiscriviti->setHidden(true);
+    ui->lblgotoiscriviti->setHidden(true);
+
+    QDate data = QDate::currentDate();
+    ui->datedata->setDate(data);
+    ui->datedata->setMaximumDate(data);
+
+    checkUsrDBFile();
+    insertAdmin();
 }
 
 MainWindow::~MainWindow()
@@ -57,26 +71,17 @@ void MainWindow::on_btniscriviti_clicked()
                     msgIscrizione.exec();
                     }
                     break;
-        case 'o': {/*Tutto ok*/} break;
+        case 'o': {if(checkIscritto()){
+                    msgIscrizione.setText("Utente già presente a sistema");
+                    msgIscrizione.exec();
+                    }
+                      else {
+                      insertUtente();
+                      msgIscrizione.setText("Utente inserito a sistema");
+                      msgIscrizione.exec();
+                    }
+        }break;
     };
-
-    /*
-    QString percorso = QApplication::applicationDirPath()+"/usrdb/";
-    QDir dir(percorso);
-    QFile csv;
-
-    if(!dir.exists()){
-        dir.mkpath(percorso);
-        csv.setFileName(percorso+"usr.csv");
-        csv.open(QIODevice::WriteOnly);
-        csv.close();
-    }
-    else
-        if(!csv.exists()){
-            csv.setFileName(percorso + "usr.csv");
-            csv.open(QIODevice::WriteOnly);
-            csv.close();
-        }*/
 
 }
 
@@ -154,19 +159,6 @@ char MainWindow::checkElements(){
     if ((!ui->rdnbtndonna->isChecked()) && (!ui->rdnbtnuomo->isChecked()))
         return 'g';
 
-    //Data
-    /*QDate data = QDate::currentDate();
-    QDate dataInserita = ui->datedata->date();
-
-    qint64 diffdata = data.toJulianDay() - dataInserita.toJulianDay();
-    QDate diffdata2 = QDate::fromJulianDay(diffdata);
-    QDate primoJulian = QDate::fromJulianDay(0);
-
-    int anno = diffdata2.year() - primoJulian.year();
-
-    if (anno<18)
-        return 'd'; */
-
     //Data --> Sommo 18 anni alla data inserita dall'utente, se maggiore della data odierna erroe
     QDate data = QDate::currentDate();
     QDate dataInserita = ui->datedata->date();
@@ -208,4 +200,69 @@ char MainWindow::checkTelMailPswd(){
     return 'o';
 }
 
+void MainWindow::checkUsrDBFile(){
+    QString percorso = QApplication::applicationDirPath()+"/usrdb/";
+    QDir dir(percorso);
+
+    if(!dir.exists()){
+        dir.mkpath(percorso);
+        csv.setFileName(percorso+"usr.csv");
+        csv.open(QIODevice::ReadOnly);
+        csv.close();
+    }
+    else
+        if(!csv.exists()){
+            csv.setFileName(percorso + "usr.csv");
+            csv.open(QIODevice::ReadOnly);
+            csv.close();
+        }
+}
+
+void MainWindow::insertAdmin(){
+    utente admin;
+
+    admin.nome = "Zlatan";
+    admin.cognome = "Ibrahimovic";
+    admin.telmail = "admin@pas.com";
+    admin.dataNascita = QDate::fromString("03101981","ddMMyyyy");
+    admin.genere = 'M';
+    admin.password = "admin";
+}
+
+bool MainWindow::checkIscritto(){
+
+    bool iscritto=false;
+    QTextStream in(&csv);
+    csv.open(QIODevice::ReadOnly);
+
+    while(!csv.atEnd() && !iscritto){
+        QStringList stringaUtente = in.readLine().split(',');
+        if(ui->lntelmail->text() == stringaUtente[2]) //Terzo parametro
+            iscritto = true;
+    }
+    in.flush();
+    csv.close();
+
+    return iscritto;
+}
+
+void MainWindow::insertUtente(){
+    utente u;
+    u.nome = ui->lnnome->text();
+    u.cognome = ui->lncognome->text();
+    u.telmail = ui->lntelmail->text();
+    u.dataNascita = ui->datedata->date();
+    if(ui->rdnbtndonna->isChecked())
+        u.genere = 'F';
+    else
+        u.genere = 'M';
+    u.password = ui->lnpassword->text();
+
+    csv.open(QIODevice::Append); //Scrive in coda
+
+    QTextStream out(&csv);
+    out << u.nome << "," << u.cognome << "," << u.telmail << "," << u.dataNascita.toString("ddMMyyyy") << "," << u.genere << "," << u.password << "\n";
+    out.flush();
+    csv.close();
+}
 

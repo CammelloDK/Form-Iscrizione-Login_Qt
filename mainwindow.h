@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFile>
+#include <QDate>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,7 +28,22 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QFile csv;
+
+    struct utente{
+        QString nome;
+        QString cognome;
+        QString telmail;
+        QDate   dataNascita;
+        QChar   genere;
+        QString password;
+    };
+
     char checkElements();
     char checkTelMailPswd();
+    void checkUsrDBFile();
+    void insertAdmin();
+    bool checkIscritto();
+    void insertUtente();
 };
 #endif // MAINWINDOW_H
