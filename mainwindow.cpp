@@ -12,11 +12,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->setFixedSize(310,340);
+    this->setFixedSize(330,340);
 
     ui->btnaccedi->setHidden(true);
     ui->btngotoiscriviti->setHidden(true);
     ui->lblgotoiscriviti->setHidden(true);
+    ui->lblgotorecupero->setHidden(true);
+    ui->btngotorecupero->setHidden(true);
+    ui->btnrecupero->setHidden(true);
 
     QDate data = QDate::currentDate();
     ui->datedata->setDate(data);
@@ -79,6 +82,7 @@ void MainWindow::on_btniscriviti_clicked()
                       insertUtente();
                       msgIscrizione.setText("Utente inserito a sistema");
                       msgIscrizione.exec();
+                      clearForm();
                     }
         }break;
     };
@@ -96,9 +100,14 @@ void MainWindow::on_btngotoaccedi_clicked()
     ui->rdnbtndonna->setHidden(true);
     ui->rdnbtnuomo->setHidden(true);
 
+    ui->lblgotorecupero->setHidden(false);
+    ui->btngotorecupero->setHidden(false);
+
     ui->btnaccedi->setHidden(false);
     ui->btngotoiscriviti->setHidden(false);
     ui->lblgotoiscriviti->setHidden(false);
+
+    clearForm();
 
 
 }
@@ -115,9 +124,18 @@ void MainWindow::on_btngotoiscriviti_clicked()
     ui->rdnbtndonna->setHidden(false);
     ui->rdnbtnuomo->setHidden(false);
 
+    ui->lblgotorecupero->setHidden(true);
+    ui->btngotorecupero->setHidden(true);
+    ui->btnrecupero->setHidden(true);
+
     ui->btnaccedi->setHidden(true);
     ui->btngotoiscriviti->setHidden(true);
     ui->lblgotoiscriviti->setHidden(true);
+
+    if(ui->lnpassword->isHidden())
+        ui->lnpassword->setHidden(false);
+
+    clearForm();
 }
 
 void MainWindow::on_btnaccedi_clicked()
@@ -140,7 +158,9 @@ void MainWindow::on_btnaccedi_clicked()
                     msgAccedi.exec();
                     }
                     break;
-        case 'o': { /*tutto ok*/} break;
+        case 'o': {
+                    login();
+                    } break;
     };
 
 }
@@ -219,7 +239,6 @@ void MainWindow::checkUsrDBFile(){
 }
 
 void MainWindow::insertAdmin(){
-    utente admin;
 
     admin.nome = "Zlatan";
     admin.cognome = "Ibrahimovic";
@@ -232,14 +251,16 @@ void MainWindow::insertAdmin(){
 bool MainWindow::checkIscritto(){
 
     bool iscritto=false;
-    QTextStream in(&csv);
-    csv.open(QIODevice::ReadOnly);
 
-    while(!csv.atEnd() && !iscritto){
+    csv.open(QIODevice::ReadOnly);
+    QTextStream in(&csv);
+
+    while(!in.atEnd() && !iscritto){
         QStringList stringaUtente = in.readLine().split(',');
         if(ui->lntelmail->text() == stringaUtente[2]) //Terzo parametro
             iscritto = true;
     }
+
     in.flush();
     csv.close();
 
@@ -266,3 +287,99 @@ void MainWindow::insertUtente(){
     csv.close();
 }
 
+void MainWindow::clearForm(){
+    ui->lnnome->setText("");
+    ui->lncognome->setText("");
+    ui->lntelmail->setText("");
+    ui->lnpassword->setText("");
+    ui->datedata->setDate(QDate::currentDate());
+    if(ui->rdnbtndonna->isChecked())
+        ui->rdnbtndonna->setChecked(false);
+    else
+        ui->rdnbtnuomo->setChecked(false);
+}
+
+void MainWindow::on_btngotorecupero_clicked()
+{
+    ui->btnrecupero->setHidden(false);
+    ui->lnpassword->setHidden(true);
+    ui->btnaccedi->setHidden(true);
+    ui->lblgotorecupero->setHidden(true);
+    ui->btngotorecupero->setHidden(true);
+
+    clearForm();
+
+}
+
+void MainWindow::on_btnrecupero_clicked()
+{
+    QMessageBox msgRecupero;
+
+    switch(checkTelMailPswd()){
+    case 'm':{
+                msgRecupero.setText("Formato mail non valido");
+                msgRecupero.exec();
+            }
+            break;
+    case 't':{
+                msgRecupero.setText("Formato numero telefonico non valido");
+                msgRecupero.exec();
+            }
+            break;
+    case 'p':
+    case 'o':{
+                if(checkIscritto()){
+                    msgRecupero.setText("e-mail e/o SMS con procedura di ripristino inviata");
+                    msgRecupero.exec();
+                }
+                else{
+                    msgRecupero.setText("Utente non presente a sistema");
+                    msgRecupero.exec();
+                }
+            }
+            break;
+    };
+}
+
+void MainWindow::login(){
+
+    QMessageBox login;
+
+
+        if(ui->lntelmail->text() == admin.telmail){
+            if(ui->lnpassword->text() == admin.password){
+                login.setText("Benvenuto superuser " + admin.nome + " " + admin.cognome);
+                //Apri grafico
+            }
+            else
+                login.setText("Password errata");
+            login.exec();
+        }
+
+        else{
+            bool signin=false;
+            csv.open(QIODevice::ReadOnly);
+            QTextStream in(&csv);
+
+            while(!in.atEnd() && !signin){
+
+                QStringList stringaUtente = in.readLine().split(',');
+
+                if(ui->lntelmail->text() == stringaUtente[2]){ //Terzo parametro
+                    if (ui->lnpassword->text() == stringaUtente[5])
+                        login.setText("Benvenuto " + stringaUtente[0] + " " + stringaUtente[1]);
+                    else
+                        login.setText("Password errata!");
+
+                    signin = true;
+                }
+
+            }
+            if(!signin)
+                login.setText("Utente non presente a sistema");
+
+            login.exec();
+            in.flush();
+            csv.close();
+         }
+    }

@@ -111,6 +111,44 @@
            </property>
           </widget>
          </item>
+         <item alignment="Qt::AlignHCenter">
+          <widget class="QPushButton" name="btnrecupero">
+           <property name="text">
+            <string>Recupera password</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="lblgotorecupero">
+             <property name="text">
+              <string>Password dimenticata?</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btngotorecupero">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+               <underline>true</underline>
+              </font>
+             </property>
+             <property name="text">
+              <string>Recuperala qui!</string>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>

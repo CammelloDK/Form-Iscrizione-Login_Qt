@@ -26,6 +26,10 @@ private slots:
 
     void on_btnaccedi_clicked();
 
+    void on_btngotorecupero_clicked();
+
+    void on_btnrecupero_clicked();
+
 private:
     Ui::MainWindow *ui;
     QFile csv;
@@ -39,11 +43,14 @@ private:
         QString password;
     };
 
+    utente admin;
     char checkElements();
     char checkTelMailPswd();
     void checkUsrDBFile();
     void insertAdmin();
     bool checkIscritto();
     void insertUtente();
+    void clearForm();
+    void login();
 };
 #endif // MAINWINDOW_H
