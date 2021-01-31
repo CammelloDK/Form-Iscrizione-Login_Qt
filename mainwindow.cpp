@@ -85,8 +85,9 @@ void MainWindow::on_btniscriviti_clicked()
                     }
                       else {
                       insertUtente();
-                      msgIscrizione.setText("Utente inserito a sistema");
-                      msgIscrizione.exec();
+                      /*msgIscrizione.setText("Utente inserito a sistema");
+                      msgIscrizione.exec();*/
+                      swapPagine('i');
                       clearForm();
                     }
         }break;
@@ -365,8 +366,10 @@ void MainWindow::on_btnrecupero_clicked()
     case 'p':
     case 'o':{
                 if(checkIscritto()){
-                    msgRecupero.setText("e-mail e/o SMS con procedura di ripristino inviata");
-                    msgRecupero.exec();
+                    swapPagine('r');
+                    //msgRecupero.setText("e-mail e/o SMS con procedura di ripristino inviata");
+                    //msgRecupero.exec();
+                    clearForm();
                 }
                 else{
                     msgRecupero.setText("Utente non presente a sistema");
@@ -384,12 +387,15 @@ void MainWindow::login(){
 
         if(ui->lntelmail->text().toLower() == admin.telmail){
             if(ui->lnpassword->text() == admin.password){
-                login.setText("Benvenuto superuser " + admin.nome + " " + admin.cognome);
+                //login.setText("Benvenuto superuser " + admin.nome + " " + admin.cognome);
+                swapPagine('a',admin.nome,admin.cognome);
+                clearForm();
                 //Apri grafico
             }
-            else
+            else{
                 login.setText("Password errata");
-            login.exec();
+                login.exec();
+            }
         }
 
         else{
@@ -402,20 +408,77 @@ void MainWindow::login(){
                 QStringList stringaUtente = in.readLine().split(',');
 
                 if(ui->lntelmail->text().toLower() == stringaUtente[2]){ //Terzo parametro
-                    if (ui->lnpassword->text() == stringaUtente[5])
-                        login.setText("Benvenuto " + stringaUtente[0] + " " + stringaUtente[1]);
-                    else
+                    if (ui->lnpassword->text() == stringaUtente[5]){
+                        //login.setText("Benvenuto " + stringaUtente[0] + " " + stringaUtente[1]);
+                        swapPagine('u',stringaUtente[0],stringaUtente[1]);
+                        clearForm();
+                    }
+                    else{
                         login.setText("Password errata!");
+                        login.exec();
+                    }
 
                     signin = true;
                 }
 
             }
-            if(!signin)
+            if(!signin){
                 login.setText("Utente non presente a sistema");
+                login.exec();
+            }
 
-            login.exec();
             in.flush();
             csv.close();
          }
     }
+
+void MainWindow::swapPagine(char pagina){
+
+    switch(pagina){
+        case 'i':{
+            this->hide();
+            Iscrizione ip(this);
+            ip.setModal(true);
+            ip.setNome(ui->lnnome->text());
+            ip.setCognome(ui->lncognome->text());
+            ip.exec();
+            this->show();
+        }
+        break;
+        case 'r':{
+            this->hide();
+            Recupero rp(this);
+            rp.setModal(true);
+            rp.exec();
+            this->show();
+        }
+        break;
+    };
+}
+
+void MainWindow::swapPagine(char pagina, QString nome, QString cognome){
+
+    switch(pagina){
+        case 'u':{
+            this->hide();
+            Loginusr lp(this);
+            lp.setModal(true);
+            lp.setNome(nome);
+            lp.setCognome(cognome);
+            lp.exec();
+            this->show();
+        }
+        break;
+
+        case 'a':{
+            this->hide();
+            Loginadmin ap(this);
+            ap.setModal(true);
+            ap.setNome(nome);
+            ap.setCognome(cognome);
+            ap.exec();
+            this->show();
+        }
+        break;
+    };
+}

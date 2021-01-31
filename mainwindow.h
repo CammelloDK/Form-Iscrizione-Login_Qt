@@ -4,6 +4,10 @@
 #include <QMainWindow>
 #include <QFile>
 #include <QDate>
+#include "iscrizione.h"
+#include "loginusr.h"
+#include "recupero.h"
+#include "loginadmin.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -52,5 +56,7 @@ private:
     void insertUtente();
     void clearForm();
     void login();
+    void swapPagine(char pagina);
+    void swapPagine(char pagina, QString nome, QString cognome);
 };
 #endif // MAINWINDOW_H

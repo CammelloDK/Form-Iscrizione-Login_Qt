@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>310</width>
-    <height>340</height>
+    <width>320</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,6 +37,9 @@
            </item>
            <item>
             <widget class="QLineEdit" name="lncognome">
+             <property name="text">
+              <string/>
+             </property>
              <property name="placeholderText">
               <string>cognome</string>
              </property>
