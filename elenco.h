@@ -18,13 +18,13 @@ public:
     explicit Elenco(QWidget *parent = nullptr);
     ~Elenco();
 
-    void setGrafico(QFile *csv);
-    void setElenco();
+    void setGrafico(QFile *csv);    //Funzione che predispone le info utili alla creazione dell'elenco
+    void setElenco();               //Funzione che realizza l'elenco
 
 private:
     Ui::Elenco *ui;
 
-    struct utente{
+    struct utente{                  //Struttura in cui verranno memorizzate le informazioni di ogni utente
         QString nome;
         QString cognome;
         QString telmail;
@@ -33,7 +33,7 @@ private:
         QString password;
     };
 
-    QList<utente> listaUtenti;
+    QList<utente> listaUtenti;      //Lista di tutti gli utenti
 
 
 };

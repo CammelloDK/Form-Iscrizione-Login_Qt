@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     elenco.cpp \
+    grafici.cpp \
     iscrizione.cpp \
     loginadmin.cpp \
     loginusr.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
 
 HEADERS += \
     elenco.h \
+    grafici.h \
     iscrizione.h \
     loginadmin.h \
     loginusr.h \
@@ -27,6 +29,7 @@ HEADERS += \
 
 FORMS += \
     elenco.ui \
+    grafici.ui \
     iscrizione.ui \
     loginadmin.ui \
     loginusr.ui \

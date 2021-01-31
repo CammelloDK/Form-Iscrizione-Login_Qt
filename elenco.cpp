@@ -6,7 +6,7 @@ Elenco::Elenco(QWidget *parent) :
     ui(new Ui::Elenco)
 {
     ui->setupUi(this);
-    this->setFixedSize(639,300);
+    this->setFixedSize(639,300);    //Rendo immodificabili le dimensioni della finestra
 }
 
 Elenco::~Elenco()

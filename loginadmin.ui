@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>600</height>
+    <height>200</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>20</height>
+         <height>30</height>
         </size>
        </property>
        <property name="font">
@@ -38,21 +38,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="piNumero">
-       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
-      </widget>
-     </item>
-     <item>
-      <widget class="QFrame" name="piMF">
-       <layout class="QHBoxLayout" name="horizontalLayout_4"/>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="lblgotoelenco">
-       <property name="text">
-        <string>Visualizza elenco iscritti</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+        <widget class="QPushButton" name="btngotografici">
+         <property name="text">
+          <string>Grafici</string>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignHCenter">
+        <widget class="QPushButton" name="lblgotoelenco">
+         <property name="text">
+          <string>Elenco</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

@@ -40,17 +40,17 @@ void MainWindow::on_btniscriviti_clicked()
 
     switch (checkElements()){
         case 'n': {
-                    msgIscrizione.setText("Inserire nome");
+                    msgIscrizione.setText("Inserire nome, il nome non può contenere il carattere ',' <- virgola");
                     msgIscrizione.exec();
                     }
                     break;
         case 'c': {
-                    msgIscrizione.setText("Inserire cognome");
+                    msgIscrizione.setText("Inserire cognome, il cognome non può contenere il carattere ',' <- virgola");
                     msgIscrizione.exec();
                     }
                     break;
         case 'p': {
-                    msgIscrizione.setText("Inserire password");
+                    msgIscrizione.setText("Inserire password, la password non può contenere il carattere ',' <- virgola");
                     msgIscrizione.exec();
                     }
                     break;
@@ -85,8 +85,6 @@ void MainWindow::on_btniscriviti_clicked()
                     }
                       else {
                       insertUtente();
-                      /*msgIscrizione.setText("Utente inserito a sistema");
-                      msgIscrizione.exec();*/
                       swapPagine('i');
                       clearForm();
                     }
@@ -179,11 +177,11 @@ void MainWindow::on_btnaccedi_clicked()
 char MainWindow::checkElements(){
 
     //Nome
-    if (ui->lnnome->text()=="")
+    if (ui->lnnome->text()=="" || ui->lnnome->text().contains(','))
         return 'n';
 
     //Cognome
-    if (ui->lncognome->text()=="")
+    if (ui->lncognome->text()=="" || ui->lncognome->text().contains(','))
         return 'c';
 
     //Genere
@@ -251,7 +249,7 @@ char MainWindow::checkTelMailPswd(){
 
      }
     //Pass
-    if (ui->lnpassword->text()=="")
+    if (ui->lnpassword->text()=="" || ui->lnpassword->text().contains(','))
         return 'p';
 
     return 'o';
@@ -277,8 +275,8 @@ void MainWindow::checkUsrDBFile(){
 
 void MainWindow::insertAdmin(){
 
-    admin.nome = "Zlatan";
-    admin.cognome = "Ibrahimovic";
+    admin.nome = "Super";
+    admin.cognome = "User";
     admin.telmail = "admin@pas.com";
     admin.dataNascita = QDate::fromString("03101981","ddMMyyyy");
     admin.genere = 'M';
@@ -374,8 +372,6 @@ void MainWindow::on_btnrecupero_clicked()
     case 'o':{
                 if(checkIscritto()){
                     swapPagine('r');
-                    //msgRecupero.setText("e-mail e/o SMS con procedura di ripristino inviata");
-                    //msgRecupero.exec();
                     clearForm();
                 }
                 else{
@@ -394,10 +390,8 @@ void MainWindow::login(){
 
         if(ui->lntelmail->text().toLower() == admin.telmail){
             if(ui->lnpassword->text() == admin.password){
-                //login.setText("Benvenuto superuser " + admin.nome + " " + admin.cognome);
                 swapPagine('a',admin.nome,admin.cognome);
                 clearForm();
-                //Apri grafico
             }
             else{
                 login.setText("Password errata");
@@ -416,7 +410,6 @@ void MainWindow::login(){
 
                 if(ui->lntelmail->text().toLower() == stringaUtente[2]){ //Terzo parametro
                     if (ui->lnpassword->text() == stringaUtente[5]){
-                        //login.setText("Benvenuto " + stringaUtente[0] + " " + stringaUtente[1]);
                         swapPagine('u',stringaUtente[0],stringaUtente[1]);
                         clearForm();
                     }
@@ -482,7 +475,7 @@ void MainWindow::swapPagine(char pagina, QString nome, QString cognome){
             Loginadmin ap(this);
             ap.setModal(true);
             ap.setAdmin(nome,cognome);
-            ap.setGrafico(&csv);
+            ap.brgFile(&csv);
             ap.exec();
             this->show();
         }
