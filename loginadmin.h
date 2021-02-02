@@ -17,8 +17,8 @@ public:
     explicit Loginadmin(QWidget *parent = nullptr);
     ~Loginadmin();
 
-    void setAdmin(QString nome, QString cognome);   //Funzione per personalizzazione pagina di benvenuto
-    void brgFile(QFile *csv);                       //Funzione "ponte" utile per portare il riferimento del file alle classi che generanno i grafici
+    void setAdmin(QString nome, QString cognome);   //Metodo per personalizzazione pagina di benvenuto
+    void brgFile(QFile *csv);                       //Metodo "ponte" utile per portare il riferimento del file alle classi che generanno i grafici
 
 private slots:
     void on_lblgotoelenco_clicked();

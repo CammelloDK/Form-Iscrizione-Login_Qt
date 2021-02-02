@@ -18,8 +18,8 @@ public:
     explicit Elenco(QWidget *parent = nullptr);
     ~Elenco();
 
-    void setGrafico(QFile *csv);    //Funzione che predispone le info utili alla creazione dell'elenco
-    void setElenco();               //Funzione che realizza l'elenco
+    void setGrafico(QFile *csv);    //Metodo che predispone le info utili alla creazione dell'elenco
+    void setElenco();               //Metodo che realizza l'elenco
 
 private:
     Ui::Elenco *ui;

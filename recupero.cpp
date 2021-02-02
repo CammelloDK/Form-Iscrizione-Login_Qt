@@ -6,7 +6,7 @@ Recupero::Recupero(QWidget *parent) :
     ui(new Ui::Recupero)
 {
     ui->setupUi(this);
-    this->setFixedSize(370,220);
+    this->setFixedSize(370,220);    //Rendo immodificabili le dimensioni della finestra
 }
 
 Recupero::~Recupero()

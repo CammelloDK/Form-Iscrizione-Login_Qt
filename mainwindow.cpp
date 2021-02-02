@@ -12,21 +12,21 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->setFixedSize(330,340);
+    this->setFixedSize(330,340);    //Rendo immodificabili le dimensioni della finestra
 
-    ui->btnaccedi->setHidden(true);
+    ui->btnaccedi->setHidden(true);         //Nascondo gli elementi non utili
     ui->btngotoiscriviti->setHidden(true);
     ui->lblgotoiscriviti->setHidden(true);
     ui->lblgotorecupero->setHidden(true);
     ui->btngotorecupero->setHidden(true);
     ui->btnrecupero->setHidden(true);
 
-    QDate data = QDate::currentDate();
-    ui->datedata->setDate(data);
-    ui->datedata->setMaximumDate(data);
+    QDate data = QDate::currentDate();  //Memorizzo la data odierna
+    ui->datedata->setDate(data);        //Imposto la data del widget a quella odierna (solo scopo "estetico")
+    ui->datedata->setMaximumDate(data); //Imposto la data odierna come massima data selezionabile, non è possibile inserire date nel futuro
 
-    checkUsrDBFile();
-    insertAdmin();
+    checkUsrDBFile();   //Metodo che verifica la presenza di percorso e file in cui scrivere/leggere info utenti
+    insertAdmin();      //Metodo per caricare in memoria le informazioni dell'utente amministratore
 }
 
 MainWindow::~MainWindow()
@@ -36,12 +36,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btniscriviti_clicked()
 {
-    QMessageBox msgIscrizione;
+    QMessageBox msgIscrizione;      //Oggetto utile a mostrare dialog di errore
 
-    switch (checkElements()){
+    switch (checkElements()){       //A seconda del char ritornato, mostro messaggio di errore
         case 'n': {
-                    msgIscrizione.setText("Inserire nome, il nome non può contenere il carattere ',' <- virgola");
-                    msgIscrizione.exec();
+                    msgIscrizione.setText("Inserire nome, il nome non può contenere il carattere ',' <- virgola"); //Messaggio di errore
+                    msgIscrizione.exec();   //Visualizzo
                     }
                     break;
         case 'c': {
@@ -84,9 +84,9 @@ void MainWindow::on_btniscriviti_clicked()
                     msgIscrizione.exec();
                     }
                       else {
-                      insertUtente();
-                      swapPagine('i');
-                      clearForm();
+                      insertUtente();   //Scrivo su file il nuovo utente
+                      swapPagine('i');  //Mostro pagina di benvenuto post iscrizione
+                      clearForm();      //Svuoto tutti i campi inseriti dall'utente
                     }
         }break;
     };
@@ -95,6 +95,7 @@ void MainWindow::on_btniscriviti_clicked()
 
 void MainWindow::on_btngotoaccedi_clicked()
 {
+    //Rendo visibili solo elementi utili
     ui->btniscriviti->setHidden(true);
     ui->btngotoaccedi->setHidden(true);
     ui->lblgotoaccedi->setHidden(true);
@@ -111,14 +112,14 @@ void MainWindow::on_btngotoaccedi_clicked()
     ui->btngotoiscriviti->setHidden(false);
     ui->lblgotoiscriviti->setHidden(false);
 
-    clearForm();
+    clearForm();    //Svuoto tutti i campi inseriti dall'utente
 
 
 }
 
 void MainWindow::on_btngotoiscriviti_clicked()
 {
-
+    //Rendo visibili solo elementi utili
     ui->btniscriviti->setHidden(false);
     ui->btngotoaccedi->setHidden(false);
     ui->lblgotoaccedi->setHidden(false);
@@ -139,17 +140,17 @@ void MainWindow::on_btngotoiscriviti_clicked()
     if(ui->lnpassword->isHidden())
         ui->lnpassword->setHidden(false);
 
-    clearForm();
+    clearForm();    //Svuoto tutti i campi inseriti dall'utente
 }
 
 void MainWindow::on_btnaccedi_clicked()
 {
-    QMessageBox msgAccedi;
+    QMessageBox msgAccedi;      //Oggetto utile a mostrare dialog di errore
 
-    switch (checkTelMailPswd()){
+    switch (checkTelMailPswd()){    //A seconda del char ritornato, mostro messaggio di errore
         case 'm': {
-                    msgAccedi.setText("Formato mail non valido");
-                    msgAccedi.exec();
+                    msgAccedi.setText("Formato mail non valido");   //Messaggio di errore
+                    msgAccedi.exec();   //Visualizzo
                     }
                     break;
         case 't': {
@@ -168,7 +169,7 @@ void MainWindow::on_btnaccedi_clicked()
                     }
                     break;
         case 'o': {
-                    login();
+                    login();    //Se tutto ok, effettuo login
                     } break;
     };
 
@@ -176,15 +177,15 @@ void MainWindow::on_btnaccedi_clicked()
 
 char MainWindow::checkElements(){
 
-    //Nome
+    //Nome --> Non può essere vuoto e non può contenere ',' (creerebbe inconsistenza nel file). Accetto nomi contenenti caratteri di qualsiasi tipo
     if (ui->lnnome->text()=="" || ui->lnnome->text().contains(','))
         return 'n';
 
-    //Cognome
+    //Cognome --> Non può essere vuoto e non può contenere ',' (creerebbe inconsistenza nel file). Accetto cognomi contenenti caratteri di qualsiasi tipo
     if (ui->lncognome->text()=="" || ui->lncognome->text().contains(','))
         return 'c';
 
-    //Genere
+    //Genere --> Uno dei due radio button deve essere selezionato
     if ((!ui->rdnbtndonna->isChecked()) && (!ui->rdnbtnuomo->isChecked()))
         return 'g';
 
@@ -195,7 +196,7 @@ char MainWindow::checkElements(){
     if (dataInserita.addYears(18)>data)
         return 'd';
 
-    //Tel | Mail, PAssword
+    //Tel | Mail, Password
     return checkTelMailPswd();
 
 
@@ -203,30 +204,34 @@ char MainWindow::checkElements(){
 
 char MainWindow::checkTelMailPswd(){
     QString telmail = ui->lntelmail->text();
+
+    //Variabili d'appoggio
     QString nomeutente, dominio= "";
     QStringList check;
 
     //Mail
-    if (telmail.contains('@') && telmail.contains('.')){
+    if (telmail.contains('@') && telmail.contains('.')){  //Controllo se '@' e '.' sono presenti
 
-        check=telmail.split('@');
+        check=telmail.split('@');   //Divido la stringa con la mail completa in 2 sottostringhe <nomeutente>@<dominio>
         nomeutente=check[0];
         dominio=check[1];
 
+        //<nomeutente> non deve essere vuoto, il <dominio> deve essere almeno di 4 caratteri e deve contenere un '.' -> (d.it)
         if(nomeutente.length()!=0 && dominio.length()>=4 && dominio.contains('.')){
-            for(int i=0;i<nomeutente.length();++i)
+            for(int i=0;i<nomeutente.length();++i)  //Controllo che <nomeutente> contenga a-Z, 0-9, '.', '-', '_'
                 if(!nomeutente[i].isLetter() && !nomeutente[i].isDigit() && nomeutente[i]!='.' && nomeutente[i]!='-' && nomeutente[i]!='_')
                     return 'm';
 
-            check=dominio.split('.');
-            nomeutente=check[0];
-            dominio=check[1];
+            check=dominio.split('.');   //Divido la stringa del <dominio> in 2 sottostringhe <dominio1>.<dominio2> riutilizzando le precedenti variabili
+            nomeutente=check[0];    //nomeutente -> dominio1
+            dominio=check[1];       //dominio -> dominio2
 
+            //<dominio1> deve contenere almeno un carattere, <dominio2> deve contenerne almeno 2 (d.it)
             if(nomeutente.length()>=1 && dominio.length()>=2){
-                for(int i=0;i<nomeutente.length();++i)
+                for(int i=0;i<nomeutente.length();++i)  //Controllo che <dominio1> contenga solo a-Z, 0-9
                     if(!nomeutente[i].isLetter() && !nomeutente[i].isDigit())
                         return 'm';
-                for(int i=0;i<dominio.length();++i)
+                for(int i=0;i<dominio.length();++i) //Controllo che <dominio2> contenga solo a-Z
                     if(!dominio[i].isLetter())
                         return 'm';
             }
@@ -248,7 +253,7 @@ char MainWindow::checkTelMailPswd(){
             return 'x';
 
      }
-    //Pass
+    //Pass --> Non può essere vuoto e non può contenere ',' (creerebbe inconsistenza nel file). Accetto password contenenti caratteri di qualsiasi tipo
     if (ui->lnpassword->text()=="" || ui->lnpassword->text().contains(','))
         return 'p';
 
@@ -256,17 +261,17 @@ char MainWindow::checkTelMailPswd(){
 }
 
 void MainWindow::checkUsrDBFile(){
-    QString percorso = QApplication::applicationDirPath()+"/usrdb/";
-    QDir dir(percorso);
+    QString percorso = QApplication::applicationDirPath()+"/usrdb/"; //Il percorso che conterrà il file sarà <cartella_eseguibilie>/usrdb/
+    QDir dir(percorso); //Creo una cartella con suddetto percorso in memoria
 
-    if(!dir.exists()){
-        dir.mkpath(percorso);
-        csv.setFileName(percorso+"usr.csv");
-        csv.open(QIODevice::ReadOnly);
-        csv.close();
+    if(!dir.exists()){  //Controllo l'effettiva esistenza in locale, se NON esiste
+        dir.mkpath(percorso);   //Creo cartella
+        csv.setFileName(percorso+"usr.csv");    //Creo un file chiamato usr.csv nel precedente percorso in memoria
+        csv.open(QIODevice::ReadOnly);      //Creo il file in locale
+        csv.close();                        //Chiudo il file
     }
     else
-        if(!csv.exists()){
+        if(!csv.exists()){  //Se il controllo del percorso da esito positivo, controllo l'esistenza del file, in caso NEGATIVO creo il file
             csv.setFileName(percorso + "usr.csv");
             csv.open(QIODevice::ReadOnly);
             csv.close();
@@ -275,6 +280,7 @@ void MainWindow::checkUsrDBFile(){
 
 void MainWindow::insertAdmin(){
 
+    //Memorizzo in memoria le info dell'utente admin
     admin.nome = "Super";
     admin.cognome = "User";
     admin.telmail = "admin@pas.com";
@@ -287,26 +293,28 @@ bool MainWindow::checkIscritto(){
 
     bool iscritto=false;
 
-    csv.open(QIODevice::ReadOnly);
-    QTextStream in(&csv);
+    csv.open(QIODevice::ReadOnly);  //Apro il file in lettura
+    QTextStream in(&csv);           //Creo stream di input
 
-    while(!in.atEnd() && !iscritto){
-        QStringList stringaUtente = in.readLine().split(',');
-        if(ui->lntelmail->text() == stringaUtente[2]) //Terzo parametro
+    while(!in.atEnd() && !iscritto){    //Fintanto che non sono alla fine del file E iscritto è false
+        QStringList stringaUtente = in.readLine().split(',');   //Leggo riga del file
+        if(ui->lntelmail->text() == stringaUtente[2]) //Controllo che mail/tel inserito dall'utente si uguale a mail/tel letto dal file
             iscritto = true;
     }
 
-    in.flush();
-    csv.close();
+    in.flush();     //Svuoto stream di output
+    csv.close();    //Chiudo il file
 
     return iscritto;
 }
 
 void MainWindow::insertUtente(){
+
+    //Salvo in memoria tutto ciò che ha inserito l'utente nella form
     utente u;
     u.nome = ui->lnnome->text();
     u.cognome = ui->lncognome->text();
-    u.telmail = ui->lntelmail->text().toLower();
+    u.telmail = ui->lntelmail->text().toLower(); //Per evitare problemi dovuti a caratteri min/MAIUSC rendo la mail tutta minuscola
     u.dataNascita = ui->datedata->date();
     if(ui->rdnbtndonna->isChecked())
         u.genere = 'F';
@@ -314,21 +322,26 @@ void MainWindow::insertUtente(){
         u.genere = 'M';
     u.password = ui->lnpassword->text();
 
-    csv.open(QIODevice::Append); //Scrive in coda
+    csv.open(QIODevice::Append); //Apro il file scrivendo in coda
 
-    QTextStream out(&csv);
+    QTextStream out(&csv);      //Apro stream di output
+
+    //Scrivo su file separando ogni campo con ','
     out << u.nome << "," << u.cognome << "," << u.telmail << "," << u.dataNascita.toString("ddMMyyyy") << "," << u.genere << "," << u.password << "\n";
-    out.flush();
-    csv.close();
+    out.flush();    //Svuoto stream di output
+    csv.close();    //Chiudo il file
 }
 
 void MainWindow::clearForm(){
+
+    //Svuoto tutti i campi
     ui->lnnome->setText("");
     ui->lncognome->setText("");
     ui->lntelmail->setText("");
     ui->lnpassword->setText("");
-    ui->datedata->setDate(QDate::currentDate());
+    ui->datedata->setDate(QDate::currentDate()); //Imposto nuovamente la data a quella corrente
 
+    //Deseleziono i radio button
     if(ui->rdnbtndonna->isChecked()){
         this->ui->rdnbtndonna->setAutoExclusive(false);
         ui->rdnbtndonna->setChecked(false);
@@ -343,24 +356,25 @@ void MainWindow::clearForm(){
 
 void MainWindow::on_btngotorecupero_clicked()
 {
+    //Rendo visibili solo gli elementi necessari
     ui->btnrecupero->setHidden(false);
     ui->lnpassword->setHidden(true);
     ui->btnaccedi->setHidden(true);
     ui->lblgotorecupero->setHidden(true);
     ui->btngotorecupero->setHidden(true);
 
-    clearForm();
+    clearForm();    //Svuoto tutti i campi
 
 }
 
 void MainWindow::on_btnrecupero_clicked()
 {
-    QMessageBox msgRecupero;
+    QMessageBox msgRecupero;    //Oggetto utile a mostrare dialog di errore
 
-    switch(checkTelMailPswd()){
+    switch(checkTelMailPswd()){ //A seconda del char ritornato mostro messaggio di errore
     case 'm':{
-                msgRecupero.setText("Formato mail non valido");
-                msgRecupero.exec();
+                msgRecupero.setText("Formato mail non valido"); //Messaggio di errore
+                msgRecupero.exec(); //Visualizzo
             }
             break;
     case 't':{
@@ -385,99 +399,99 @@ void MainWindow::on_btnrecupero_clicked()
 
 void MainWindow::login(){
 
-    QMessageBox login;
+    QMessageBox login;  //Oggetto utile a mostrare dialog di errore
 
-
+        //Admin --> Confronto ciò che è stato inserito nella form con l'utente admin in memoria
         if(ui->lntelmail->text().toLower() == admin.telmail){
             if(ui->lnpassword->text() == admin.password){
-                swapPagine('a',admin.nome,admin.cognome);
-                clearForm();
+                swapPagine('a',admin.nome,admin.cognome);   //Se il confronto è positivo, mostro la pagina dell'amministratore
+                clearForm();    //Svuoto i campi inseriti dall'utente
             }
             else{
                 login.setText("Password errata");
                 login.exec();
             }
         }
-
+        //Utenti --> Confronto ciò che è stato inserito nella form con gli utenti salvati nel file
         else{
-            bool signin=false;
-            csv.open(QIODevice::ReadOnly);
-            QTextStream in(&csv);
+            bool signin=false;              //Variabile d'appoggio
+            csv.open(QIODevice::ReadOnly);  //Apro il file in sola lettura
+            QTextStream in(&csv);           //Creo stream di input
 
-            while(!in.atEnd() && !signin){
+            while(!in.atEnd() && !signin){  //Fintanto che non leggo tutto il file e signin è FALSE
 
-                QStringList stringaUtente = in.readLine().split(',');
+                QStringList stringaUtente = in.readLine().split(',');   //Leggo riga dal file
 
-                if(ui->lntelmail->text().toLower() == stringaUtente[2]){ //Terzo parametro
-                    if (ui->lnpassword->text() == stringaUtente[5]){
-                        swapPagine('u',stringaUtente[0],stringaUtente[1]);
-                        clearForm();
+                if(ui->lntelmail->text().toLower() == stringaUtente[2]){ //Confronto il campo telmail con ciò che è stato letto dal file
+                    if (ui->lnpassword->text() == stringaUtente[5]){    //Confronto il campo password con ciò che è stato letto dal file
+                        swapPagine('u',stringaUtente[0],stringaUtente[1]);  //Se tel/mail e password coincidono mostro pagina di benvenuto all'utente
+                        clearForm();    //Svuoto i campi inseriti dall'utente
                     }
                     else{
                         login.setText("Password errata!");
                         login.exec();
                     }
 
-                    signin = true;
+                    signin = true;  //Se tel/mail e password coincidono signin = TRUE
                 }
 
             }
-            if(!signin){
+            if(!signin){    //Se il login non è andato a buon fine mostro messaggio d'errore
                 login.setText("Utente non presente a sistema");
                 login.exec();
             }
 
-            in.flush();
-            csv.close();
+            in.flush(); //Svuoto stream di input
+            csv.close();    //Chiudo file
          }
     }
 
 void MainWindow::swapPagine(char pagina){
 
     switch(pagina){
-        case 'i':{
-            this->hide();
-            Iscrizione ip(this);
-            ip.setModal(true);
-            ip.setNome(ui->lnnome->text());
-            ip.setCognome(ui->lncognome->text());
-            ip.exec();
-            this->show();
+        case 'i':{  //Pagina iscrizione
+            this->hide();   //Nascondo la pagina attuale
+            Iscrizione ip(this);    //Creo oggetto di tipo Iscrizione per gestire l'omonima pagina
+            ip.setModal(true);      //Rendo la finestra iscrizione modale, in modo da poter interagire solo con quella una volta visualizzata
+            ip.setNome(ui->lnnome->text());     //Personalizzo pagina di benvenuto con nome utente
+            ip.setCognome(ui->lncognome->text());   //Personalizzo pagina di benvenuto con cognome utente
+            ip.exec();  //Visualizzo pagina iscrizione
+            this->show();   //Una volta chiusa la pagina di iscrizione rimostro l'attuale
         }
         break;
-        case 'r':{
-            this->hide();
-            Recupero rp(this);
-            rp.setModal(true);
-            rp.exec();
-            this->show();
+        case 'r':{  //Pagina recupero password
+            this->hide();       //Nascondo la pagina attuale
+            Recupero rp(this);  //Creo oggetto di tipo Recupero per gestire l'omonima pagina
+            rp.setModal(true);  //Rendo la finestra recupero modale, in modo da poter interagire solo con quella una volta visualizzata
+            rp.exec();      //Visualizzo pagina recupero
+            this->show();   //Una volta chiusa la pagina di recupero rimostro l'attuale
         }
         break;
     };
 }
 
-void MainWindow::swapPagine(char pagina, QString nome, QString cognome){
+void MainWindow::swapPagine(char pagina, QString nome, QString cognome){    //Overloading del metodo precedente, qui passo nome e cognome in input al metodo
 
     switch(pagina){
-        case 'u':{
-            this->hide();
-            Loginusr lp(this);
-            lp.setModal(true);
-            lp.setNome(nome);
-            lp.setCognome(cognome);
-            lp.exec();
-            this->show();
+        case 'u':{      //Pagina login utente
+            this->hide();    //Nascondo la pagina attuale
+            Loginusr lp(this);  //Creo oggetto di tipo Loginusr per gestire l'omonima pagina
+            lp.setModal(true);  //Rendo la finestra loginusr modale, in modo da poter interagire solo con quella una volta visualizzata
+            lp.setNome(nome);   //Utilizzo il metodo setter per il nome
+            lp.setCognome(cognome); //Utilizzo il metodo setter per il cognome
+            lp.exec();      //Visualizzo la pagina loginusr
+            this->show();   //Una volta chiusa la pagina di loginusr rimostro l'attuale
         }
         break;
 
-        case 'a':{
-            this->hide();
-            Loginadmin ap(this);
-            ap.setModal(true);
-            ap.setAdmin(nome,cognome);
-            ap.brgFile(&csv);
-            ap.exec();
-            this->show();
+        case 'a':{      //Pagina login admin
+            this->hide();   //Nascondo la pagina attuale
+            Loginadmin ap(this);    //Creo oggetto di tipo Loginadmin per gestire l'omonima pagina
+            ap.setModal(true);      //Rendo la finestra loginadmin modale, in modo da poter interagire solo con quella una volta visualizzata
+            ap.setAdmin(nome,cognome);  //Utilizzo il metodo setter per nome e cognome dell'admin
+            ap.brgFile(&csv);   //Passo il riferimento al file, verrà utilizzato dalle 2 pagine che mostreranno grafici ed elenco
+            ap.exec();      //Visualizzo la pagina loginuadmin
+            this->show();       //Una volta chiusa la pagina di loginadmin rimostro l'attuale
         }
         break;
     };

@@ -15,7 +15,7 @@ public:
     explicit Iscrizione(QWidget *parent = nullptr);
     ~Iscrizione();
 
-    //Funzioni per personalizzazione pagina di benvenuto
+    //Metodi per personalizzazione pagina di benvenuto
     void setNome(QString n);
     void setCognome(QString c);
 

@@ -36,9 +36,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QFile csv;                                                  //File in cui scriveremo gli utenti
+    QFile csv;                      //File in cui scriveremo gli utenti
 
-    struct utente{                                              //Struttura di memorizzazione degli utenti
+    struct utente{                  //Struttura di memorizzazione degli utenti
         QString nome;
         QString cognome;
         QString telmail;
@@ -47,16 +47,16 @@ private:
         QString password;
     };
 
-    utente admin;                                               //Creiamo una variabile admin di tipo utente
-    char checkElements();                                       //Funzione per verificare la correttezza dei dati inseriti tramite form
-    char checkTelMailPswd();                                    //Funzione per verificare la correttezza dei dati telefono/mail e password inseriti tramite form
-    void checkUsrDBFile();                                      //Funzione per verificare la presenza del percorso del file di memorizzazione degli utenti, in caso negativo crea
-    void insertAdmin();                                         //Funzione per caricare in memoria le informazioni relative all'utente admin
-    bool checkIscritto();                                       //Funzione per verificare l'iscrizione di un utente
-    void insertUtente();                                        //Funzione per scrivere su file un nuovo utente
-    void clearForm();                                           //Funzione per svuotare tutti i campi della form
-    void login();                                               //Funzione di login
-    void swapPagine(char pagina);                               //Funzione per visualizzare nuove pagine
-    void swapPagine(char pagina, QString nome, QString cognome);//Funzione per visualizzare pagine personalizzate
+    utente admin;                   //Creiamo una variabile admin di tipo utente
+    char checkElements();           //Metodo per verificare la correttezza dei dati inseriti tramite form
+    char checkTelMailPswd();        //Metodo per verificare la correttezza dei dati telefono/mail e password inseriti tramite form
+    void checkUsrDBFile();          //Metodo per verificare la presenza del percorso del file di memorizzazione degli utenti, in caso negativo crea
+    void insertAdmin();             //Metodo per caricare in memoria le informazioni relative all'utente admin
+    bool checkIscritto();           //Metodo per verificare l'iscrizione di un utente
+    void insertUtente();            //Metodo per scrivere su file un nuovo utente
+    void clearForm();               //Metodo per svuotare tutti i campi della form
+    void login();                   //Metodo di login
+    void swapPagine(char pagina);                                   //Metodo per visualizzare nuove pagine
+    void swapPagine(char pagina, QString nome, QString cognome);    //Metodo per visualizzare pagine personalizzate
 };
 #endif // MAINWINDOW_H

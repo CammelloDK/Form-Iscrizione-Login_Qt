@@ -6,7 +6,7 @@ Loginusr::Loginusr(QWidget *parent) :
     ui(new Ui::Loginusr)
 {
     ui->setupUi(this);
-    this->setFixedSize(370,220);
+    this->setFixedSize(370,220);    //Rendo immodificabili le dimensioni della finestra
 }
 
 Loginusr::~Loginusr()
@@ -15,9 +15,9 @@ Loginusr::~Loginusr()
 }
 
 void Loginusr::setNome(QString n){
-    ui->lblnome->setText(n);
+    ui->lblnome->setText(n);        //Metodo setter per il contenuto della label Nome
 }
 
 void Loginusr::setCognome(QString c){
-    ui->lblcognome->setText(c);
+    ui->lblcognome->setText(c);     //Metodo setter per il contenuto della label Cognome
 }

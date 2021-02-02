@@ -20,9 +20,9 @@ public:
     explicit Grafici(QWidget *parent = nullptr);
     ~Grafici();
 
-    void setGrafico(QFile *csv);    //Funzione che predispone le info utili alla creazione dei grafici
-    void setGrGenere();             //Funzione che realizza il grafico dei generi
-    void setGrEta();                //Funzione che realizza il grafico delle età
+    void setGrafico(QFile *csv);    //Metodo che predispone le info utili alla creazione dei grafici
+    void setGrGenere();             //Metodo che realizza il grafico dei generi
+    void setGrEta();                //Metodo che realizza il grafico delle età
 
 private:
     Ui::Grafici *ui;

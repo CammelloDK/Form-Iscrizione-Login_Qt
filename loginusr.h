@@ -15,7 +15,7 @@ public:
     explicit Loginusr(QWidget *parent = nullptr);
     ~Loginusr();
 
-    //Funzioni per personalizzazione pagina di login
+    //Metodi per personalizzazione pagina di login
     void setNome(QString n);
     void setCognome(QString c);
 
