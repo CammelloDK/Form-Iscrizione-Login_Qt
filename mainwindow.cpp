@@ -267,15 +267,14 @@ void MainWindow::checkUsrDBFile(){
     if(!dir.exists()){  //Controllo l'effettiva esistenza in locale, se NON esiste
         dir.mkpath(percorso);   //Creo cartella
         csv.setFileName(percorso+"usr.csv");    //Creo un file chiamato usr.csv nel precedente percorso in memoria
-        csv.open(QIODevice::ReadOnly);      //Creo il file in locale
+        csv.open(QIODevice::NewOnly);      //Creo il file in locale
         csv.close();                        //Chiudo il file
     }
-    else
-        if(!csv.exists()){  //Se il controllo del percorso da esito positivo, controllo l'esistenza del file, in caso NEGATIVO creo il file
-            csv.setFileName(percorso + "usr.csv");
-            csv.open(QIODevice::ReadOnly);
-            csv.close();
-        }
+    csv.setFileName(percorso + "usr.csv");
+    if(!csv.exists()){  //Se il controllo del percorso da esito positivo, controllo l'esistenza del file, in caso NEGATIVO creo il file
+        csv.open(QIODevice::NewOnly);
+        csv.close();
+    }
 }
 
 void MainWindow::insertAdmin(){
