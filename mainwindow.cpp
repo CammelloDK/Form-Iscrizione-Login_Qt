@@ -64,6 +64,11 @@ void MainWindow::on_btniscriviti_clicked()
                     msgIscrizione.exec();
                     }
                     break;
+        case 'a': {
+                    msgIscrizione.setText("La mail \"admin@pas.com\" è già in uso presso l'amministratore, inserirne un'altra");
+                    msgIscrizione.exec();
+                    }
+                    break;
         case 'm': {
                     msgIscrizione.setText("Formato mail non valido");
                     msgIscrizione.exec();
@@ -195,6 +200,10 @@ char MainWindow::checkElements(){
 
     if (dataInserita.addYears(18)>data)
         return 'd';
+
+    //Mail --> Controllo che la mail inserita sia diversa da quella dell'admin
+    if(ui->lntelmail->text()==admin.telmail)
+        return 'a';
 
     //Tel | Mail, Password
     return checkTelMailPswd();
