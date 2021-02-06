@@ -219,49 +219,54 @@ char MainWindow::checkTelMailPswd(){
     QStringList check;
 
     //Mail
-    if (telmail.contains('@') && telmail.contains('.')){  //Controllo se '@' e '.' sono presenti
+    if(telmail!=""){
+        if (telmail.contains('@') && telmail.contains('.')){  //Controllo se '@' e '.' sono presenti
 
-        check=telmail.split('@');   //Divido la stringa con la mail completa in 2 sottostringhe <nomeutente>@<dominio>
-        nomeutente=check[0];
-        dominio=check[1];
+            check=telmail.split('@');   //Divido la stringa con la mail completa in 2 sottostringhe <nomeutente>@<dominio>
+            nomeutente=check[0];
+            dominio=check[1];
 
-        //<nomeutente> non deve essere vuoto, il <dominio> deve essere almeno di 4 caratteri e deve contenere un '.' -> (d.it)
-        if(nomeutente.length()!=0 && dominio.length()>=4 && dominio.contains('.')){
-            for(int i=0;i<nomeutente.length();++i)  //Controllo che <nomeutente> contenga a-Z, 0-9, '.', '-', '_'
-                if(!nomeutente[i].isLetter() && !nomeutente[i].isDigit() && nomeutente[i]!='.' && nomeutente[i]!='-' && nomeutente[i]!='_')
+            //<nomeutente> non deve essere vuoto, il <dominio> deve essere almeno di 4 caratteri e deve contenere un '.' -> (d.it)
+            if(nomeutente.length()!=0 && dominio.length()>=4 && dominio.contains('.')){
+                for(int i=0;i<nomeutente.length();++i)  //Controllo che <nomeutente> contenga a-Z, 0-9, '.', '-', '_'
+                    if(!nomeutente[i].isLetter() && !nomeutente[i].isDigit() && nomeutente[i]!='.' && nomeutente[i]!='-' && nomeutente[i]!='_')
+                        return 'm';
+
+                check=dominio.split('.');   //Divido la stringa del <dominio> in 2 sottostringhe <dominio1>.<dominio2> riutilizzando le precedenti variabili
+                nomeutente=check[0];    //nomeutente -> dominio1
+                dominio=check[1];       //dominio -> dominio2
+
+                //<dominio1> deve contenere almeno un carattere, <dominio2> deve contenerne almeno 2 (d.it)
+                if(nomeutente.length()>=1 && dominio.length()>=2){
+                    for(int i=0;i<nomeutente.length();++i)  //Controllo che <dominio1> contenga solo a-Z, 0-9
+                        if(!nomeutente[i].isLetter() && !nomeutente[i].isDigit())
+                            return 'm';
+                    for(int i=0;i<dominio.length();++i) //Controllo che <dominio2> contenga solo a-Z
+                        if(!dominio[i].isLetter())
+                            return 'm';
+                }
+                else
                     return 'm';
 
-            check=dominio.split('.');   //Divido la stringa del <dominio> in 2 sottostringhe <dominio1>.<dominio2> riutilizzando le precedenti variabili
-            nomeutente=check[0];    //nomeutente -> dominio1
-            dominio=check[1];       //dominio -> dominio2
-
-            //<dominio1> deve contenere almeno un carattere, <dominio2> deve contenerne almeno 2 (d.it)
-            if(nomeutente.length()>=1 && dominio.length()>=2){
-                for(int i=0;i<nomeutente.length();++i)  //Controllo che <dominio1> contenga solo a-Z, 0-9
-                    if(!nomeutente[i].isLetter() && !nomeutente[i].isDigit())
-                        return 'm';
-                for(int i=0;i<dominio.length();++i) //Controllo che <dominio2> contenga solo a-Z
-                    if(!dominio[i].isLetter())
-                        return 'm';
             }
             else
                 return 'm';
-
         }
-        else
-            return 'm';
+        else{
+        //Tel  --> Controllo della lunghezza del numero di cellulare, poi controllo se tutte cifre
+            if (telmail.length()==10){
+                for (int i=0;i<telmail.length();++i)
+                    if (!telmail[i].isDigit())
+                        return 't';
+            }
+            else
+                return 'x';
+
+         }
     }
-    else{
-    //Tel  --> Controllo della lunghezza del numero di cellulare, poi controllo se tutte cifre
-        if (telmail.length()==10){
-            for (int i=0;i<telmail.length();++i)
-                if (!telmail[i].isDigit())
-                    return 't';
-        }
-        else
-            return 'x';
+    else
+        return 'x';
 
-     }
     //Pass --> Non può essere vuoto e non può contenere ',' (creerebbe inconsistenza nel file). Accetto password contenenti caratteri di qualsiasi tipo
     if (ui->lnpassword->text()=="" || ui->lnpassword->text().contains(','))
         return 'p';
@@ -387,6 +392,11 @@ void MainWindow::on_btnrecupero_clicked()
             break;
     case 't':{
                 msgRecupero.setText("Formato numero telefonico non valido");
+                msgRecupero.exec();
+            }
+            break;
+    case 'x':{
+                msgRecupero.setText("Inserire un indirizzo mail o un numero telefonico valido");
                 msgRecupero.exec();
             }
             break;
